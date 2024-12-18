@@ -1,12 +1,13 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from app.extensions import db, migrate, ma
 from app.config import Config
 from app.routes import product_blueprint
 from app.extensions import db, migrate
 
-db = SQLAlchemy()
-migrate = Migrate()
+# db = SQLAlchemy()
+# migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
