@@ -2,8 +2,11 @@ from app.extensions import ma
 from app.models import *
 
 class ProductSchema(ma.SQLAlchemyAutoSchema):
+
     class Meta:
         model = Product
+        load_instance = True
+        include_relationships = True
 
 class CategorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:

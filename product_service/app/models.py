@@ -104,6 +104,43 @@ class Product(db.Model):
         except Exception as e:
             db.session.rollback()  # У разі помилки відкочуємо транзакцію
             raise ValueError(f"Error creating product: {str(e)}")
+    
+    @staticmethod
+    def update(product_id, data):
+        """
+        Update an existing product in the database.
+        """
+        try:
+            # Find the product by ID
+            product = Product.query.get_or_404(product_id)
+        
+            # Update fields from the provided data
+            if 'weight' in data:
+                product.weight = data.get('weight')
+            if 'id_brand' in data:
+                product.id_brand = data.get('id_brand')
+            if 'id_type' in data:
+                product.id_type = data.get('id_type')
+            if 'name' in data:
+                product.name = data.get('name')
+            if 'description' in data:
+                product.description = data.get('description')
+            if 'properties' in data:
+                product.properties = data.get('properties')
+            if 'taste' in data:
+                product.taste = data.get('taste')
+            if 'appearance' in data:
+                product.appearance = data.get('appearance')
+            if 'id_province' in data:
+                product.id_province = data.get('id_province')
+
+        # Commit changes to the database
+            db.session.commit()
+            return product
+        except Exception as e:
+            db.session.rollback()  # Rollback in case of an error
+            raise ValueError(f"Error updating product: {str(e)}")
+
 
         
 
