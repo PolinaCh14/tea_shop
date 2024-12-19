@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from app.models import Product, Category, ProductCategory, ProductType, Brand
+from app.models import Product, Category, ProductCategory, ProductType, Brand, Province, Country
 from app.schema import ProductSchema
 from sqlalchemy.orm import joinedload
 from app.extensions import db
@@ -189,3 +189,232 @@ def search_product_by_brand(brand_name):
 
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
+# Add Product Type
+@product_blueprint.route(f"{BASE_URL}/types", methods=['POST'])
+def create_type():
+    try:
+        data = request.json
+        new_type = ProductType(type=data.get('type'))
+        db.session.add(new_type)
+        db.session.commit()
+        return jsonify({"message": "Product Type created", "type": new_type.type}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Get All Product Types
+@product_blueprint.route(f"{BASE_URL}/types", methods=['GET'])
+def get_types():
+    try:
+        types = ProductType.query.all()
+        return jsonify([{"id": t.id, "type": t.type} for t in types]), 200
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Update Product Type
+@product_blueprint.route(f"{BASE_URL}/types/<int:type_id>", methods=['PUT'])
+def update_type(type_id):
+    try:
+        data = request.json
+        type_obj = ProductType.query.get_or_404(type_id)
+        type_obj.type = data.get('type', type_obj.type)
+        db.session.commit()
+        return jsonify({"message": "Product Type updated", "type": type_obj.type}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Delete Product Type
+@product_blueprint.route(f"{BASE_URL}/types/<int:type_id>", methods=['DELETE'])
+def delete_type(type_id):
+    try:
+        type_obj = ProductType.query.get_or_404(type_id)
+        db.session.delete(type_obj)
+        db.session.commit()
+        return jsonify({"message": "Product Type deleted"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
+# Add Category
+@product_blueprint.route(f"{BASE_URL}/categories", methods=['POST'])
+def create_category():
+    try:
+        data = request.json
+        new_category = Category(category=data.get('category'))
+        db.session.add(new_category)
+        db.session.commit()
+        return jsonify({"message": "Category created", "category": new_category.category}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Get All Categories
+@product_blueprint.route(f"{BASE_URL}/categories", methods=['GET'])
+def get_categories():
+    try:
+        categories = Category.query.all()
+        return jsonify([{"id": c.id, "category": c.category} for c in categories]), 200
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Update Category
+@product_blueprint.route(f"{BASE_URL}/categories/<int:category_id>", methods=['PUT'])
+def update_category(category_id):
+    try:
+        data = request.json
+        category = Category.query.get_or_404(category_id)
+        category.category = data.get('category', category.category)
+        db.session.commit()
+        return jsonify({"message": "Category updated", "category": category.category}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Delete Category
+@product_blueprint.route(f"{BASE_URL}/categories/<int:category_id>", methods=['DELETE'])
+def delete_category(category_id):
+    try:
+        category = Category.query.get_or_404(category_id)
+        db.session.delete(category)
+        db.session.commit()
+        return jsonify({"message": "Category deleted"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
+# Add Country
+@product_blueprint.route(f"{BASE_URL}/country", methods=['POST'])
+def create_country():
+    try:
+        data = request.json
+        new_country = Country(country=data.get('country'))
+        db.session.add(new_country)
+        db.session.commit()
+        return jsonify({"message": "Country created", "country": new_country.country}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Get All Countries
+@product_blueprint.route(f"{BASE_URL}/countries", methods=['GET'])
+def get_countries():
+    try:
+        countries = Country.query.all()
+        return jsonify([{"id": c.id, "country": c.country} for c in countries]), 200
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Update Country
+@product_blueprint.route(f"{BASE_URL}/country/<int:country_id>", methods=['PUT'])
+def update_country(country_id):
+    try:
+        data = request.json
+        country = Country.query.get_or_404(country_id)
+        country.country = data.get('country', country.country)
+        db.session.commit()
+        return jsonify({"message": "Country updated", "country": country.country}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Delete Country
+@product_blueprint.route(f"{BASE_URL}/country/<int:country_id>", methods=['DELETE'])
+def delete_country(country_id):
+    try:
+        country = Country.query.get_or_404(country_id)
+        db.session.delete(country)
+        db.session.commit()
+        return jsonify({"message": "Country deleted"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
+# Add Province
+@product_blueprint.route(f"{BASE_URL}/province", methods=['POST'])
+def create_province():
+    try:
+        data = request.json
+        new_province = Province(id_country=data.get('id_country'), province=data.get('province'))
+        db.session.add(new_province)
+        db.session.commit()
+        return jsonify({"message": "Province created", "province": new_province.province}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Get All Provinces
+@product_blueprint.route(f"{BASE_URL}/provinces", methods=['GET'])
+def get_provinces():
+    try:
+        provinces = Province.query.all()
+        return jsonify([{"id": p.id, "province": p.province} for p in provinces]), 200
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Update Province
+@product_blueprint.route(f"{BASE_URL}/province/<int:province_id>", methods=['PUT'])
+def update_province(province_id):
+    try:
+        data = request.json
+        province = Province.query.get_or_404(province_id)
+        province.province = data.get('province', province.province)
+        db.session.commit()
+        return jsonify({"message": "Province updated", "province": province.province}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Delete Province
+@product_blueprint.route(f"{BASE_URL}/province/<int:province_id>", methods=['DELETE'])
+def delete_province(province_id):
+    try:
+        province = Province.query.get_or_404(province_id)
+        db.session.delete(province)
+        db.session.commit()
+        return jsonify({"message": "Province deleted"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
+
+# Add Brand
+@product_blueprint.route(f"{BASE_URL}/brands", methods=['POST'])
+def create_brand():
+    try:
+        data = request.json
+        new_brand = Brand(name=data.get('name'), id_country=data.get('id_country'))
+        db.session.add(new_brand)
+        db.session.commit()
+        return jsonify({"message": "Brand created", "brand": new_brand.name}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Get All Brands
+@product_blueprint.route(f"{BASE_URL}/brands", methods=['GET'])
+def get_brands():
+    try:
+        brands = Brand.query.all()
+        return jsonify([{"id": b.id, "name": b.name} for b in brands]), 200
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+# Update Brand
+@product_blueprint.route(f"{BASE_URL}/brands/<int:brand_id>", methods=['PUT'])
+def update_brand(brand_id):
+    try:
+        data = request.json
+        brand = Brand.query.get_or_404(brand_id)
+        brand.name = data.get('name', brand.name)
+        db.session.commit()
+        return jsonify({"message": "Brand updated", "brand": brand.name}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f"Unexpected error: {str(e)}"}),

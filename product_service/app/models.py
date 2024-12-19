@@ -154,3 +154,5 @@ class ProductCategory(db.Model):
     def __init__(self, id_category, id_product):
         self.id_category = id_category
         self.id_product = id_product
+
+
