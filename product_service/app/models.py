@@ -64,13 +64,14 @@ class Product(db.Model):
     properties = db.Column(db.String(40))
     taste = db.Column(db.String(30))
     appearance = db.Column(db.String(50))
+    price = db.Column(db.Float)
     id_province = db.Column(db.Integer, db.ForeignKey('province.id'), nullable=False)
 
     brand = db.relationship('Brand', backref='products')
     type = db.relationship('ProductType', backref='products')
     categories = db.relationship('Category', secondary='product_category', back_populates='products')
 
-    def __init__(self, weight, id_brand, id_type, name, description, properties, taste, appearance, id_province):
+    def __init__(self, weight, id_brand, id_type, name, description, properties, taste, appearance, price, id_province):
         self.weight = weight
         self.id_brand = id_brand
         self.id_type = id_type
@@ -79,6 +80,7 @@ class Product(db.Model):
         self.properties = properties
         self.taste = taste
         self.appearance = appearance
+        self.price = price
         self.id_province = id_province
     
     @staticmethod
@@ -96,13 +98,14 @@ class Product(db.Model):
                 properties=data.get('properties'),
                 taste=data.get('taste'),
                 appearance=data.get('appearance'),
+                price = data.get('price'),
                 id_province=data.get('id_province')
             )
-            db.session.add(new_product)  # Додаємо об'єкт до сесії
-            db.session.commit()  # Комітимо зміни до бази даних
+            db.session.add(new_product)  
+            db.session.commit()  
             return new_product
         except Exception as e:
-            db.session.rollback()  # У разі помилки відкочуємо транзакцію
+            db.session.rollback()  
             raise ValueError(f"Error creating product: {str(e)}")
     
     @staticmethod
@@ -111,10 +114,8 @@ class Product(db.Model):
         Update an existing product in the database.
         """
         try:
-            # Find the product by ID
             product = Product.query.get_or_404(product_id)
         
-            # Update fields from the provided data
             if 'weight' in data:
                 product.weight = data.get('weight')
             if 'id_brand' in data:
@@ -131,14 +132,15 @@ class Product(db.Model):
                 product.taste = data.get('taste')
             if 'appearance' in data:
                 product.appearance = data.get('appearance')
+            if 'price' in data:
+                product.price = data.get('price')
             if 'id_province' in data:
                 product.id_province = data.get('id_province')
 
-        # Commit changes to the database
             db.session.commit()
             return product
         except Exception as e:
-            db.session.rollback()  # Rollback in case of an error
+            db.session.rollback() 
             raise ValueError(f"Error updating product: {str(e)}")
 
 
