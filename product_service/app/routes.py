@@ -1,15 +1,76 @@
+import requests
 from flask import Blueprint, jsonify, request
 from app.models import Product, Category, ProductCategory, ProductType, Brand, Province, Country
 from app.schema import ProductSchema
 from sqlalchemy.orm import joinedload
 from app.extensions import db
 from sqlalchemy import func
+import atexit
+
+# import services.app.models.Service
 
 product_blueprint = Blueprint('product_blueprint', __name__)
 
 product_schema = ProductSchema()
 products_schema = ProductSchema(many=True)
 BASE_URL = "/products"
+
+SERVICE_INSTANCE = None
+appHasRunBefore = False
+
+@product_blueprint.before_app_request
+def start_service():
+    global SERVICE_INSTANCE, appHasRunBefore
+    if not appHasRunBefore:
+        service_data = {
+            "name": "product",
+            "endpoint": "http://127.0.0.1:5001/product",  # Повний URL сервісу продуктів
+            "description": "Service for managing products"
+        }
+        try:
+            # Виконати POST-запит на сервіс реєстрації
+            response = requests.post(
+                url="http://127.0.0.1:5000/services/register",  # Замініть service-host на реальний хост сервісу
+                json=service_data
+            )
+            print(f"Response Status Code: {response.status_code}")
+            print(f"Response Content: {response.text}")
+            
+            # Обробка відповіді
+            if response.status_code == 201:
+                print("Service registered successfully:", response.json())
+                SERVICE_INSTANCE = response.json()
+                print(SERVICE_INSTANCE)
+            else:
+                print("Failed to register service:", response.json())
+        
+        except requests.exceptions.RequestException as e:
+            print("Error during service registration:", str(e))
+        
+        appHasRunBefore = True
+
+
+# @product_blueprint.teardown_request
+def stop_service(exception=None):
+    if SERVICE_INSTANCE is None:
+        print("Service instance is not available.")
+        return
+
+    try:
+        print(SERVICE_INSTANCE)
+        response = requests.post(
+            url=f"http://127.0.0.1:5000/services/{SERVICE_INSTANCE['id']}/unregister"  # Замініть service-host на реальний хост сервісу
+        )
+        
+        if response.status_code == 200:
+            print("Service unregistered successfully.")
+        else:
+            print(f"Failed to unregister service. Status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print("Error during service unregistration:", str(e))
+
+atexit.register(stop_service)
+
 
 @product_blueprint.route(BASE_URL, methods=['GET'])
 def product_list():

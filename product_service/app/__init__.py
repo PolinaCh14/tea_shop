@@ -5,6 +5,7 @@ from app.extensions import db, migrate, ma
 from app.config import Config
 from app.routes import product_blueprint
 from app.extensions import db, migrate
+# from ..app.models import Service
 
 # db = SQLAlchemy()
 # migrate = Migrate()
@@ -22,6 +23,7 @@ def create_app():
     @app.route('/test/')
     def test_page():
         return '<h1>Testing the Flask Application Factory Pattern</h1>'
-
+    
+    # app.run(host='0.0.0.0', port=5001)
 
     return app
