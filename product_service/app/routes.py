@@ -7,7 +7,6 @@ from app.extensions import db
 from sqlalchemy import func
 import atexit
 
-# import services.app.models.Service
 
 product_blueprint = Blueprint('product_blueprint', __name__)
 
@@ -24,19 +23,18 @@ def start_service():
     if not appHasRunBefore:
         service_data = {
             "name": "product",
-            "endpoint": "http://127.0.0.1:5001/product",  # Повний URL сервісу продуктів
+            "endpoint": "http://127.0.0.1:5001/product",  
             "description": "Service for managing products"
         }
         try:
-            # Виконати POST-запит на сервіс реєстрації
+           
             response = requests.post(
-                url="http://127.0.0.1:5000/services/register",  # Замініть service-host на реальний хост сервісу
+                url="http://127.0.0.1:5000/services/register",  
                 json=service_data
             )
             print(f"Response Status Code: {response.status_code}")
             print(f"Response Content: {response.text}")
             
-            # Обробка відповіді
             if response.status_code == 201:
                 print("Service registered successfully:", response.json())
                 SERVICE_INSTANCE = response.json()
@@ -50,7 +48,6 @@ def start_service():
         appHasRunBefore = True
 
 
-# @product_blueprint.teardown_request
 def stop_service(exception=None):
     if SERVICE_INSTANCE is None:
         print("Service instance is not available.")
@@ -59,7 +56,7 @@ def stop_service(exception=None):
     try:
         print(SERVICE_INSTANCE)
         response = requests.post(
-            url=f"http://127.0.0.1:5000/services/{SERVICE_INSTANCE['id']}/unregister"  # Замініть service-host на реальний хост сервісу
+            url=f"http://127.0.0.1:5000/services/{SERVICE_INSTANCE['id']}/unregister"  
         )
         
         if response.status_code == 200:
@@ -252,7 +249,7 @@ def search_product_by_brand(brand_name):
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 
-# Add Product Type
+
 @product_blueprint.route(f"{BASE_URL}/types", methods=['POST'])
 def create_type():
     try:
@@ -265,7 +262,7 @@ def create_type():
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Get All Product Types
+
 @product_blueprint.route(f"{BASE_URL}/types", methods=['GET'])
 def get_types():
     try:
@@ -274,7 +271,7 @@ def get_types():
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Update Product Type
+
 @product_blueprint.route(f"{BASE_URL}/types/<int:type_id>", methods=['PUT'])
 def update_type(type_id):
     try:
@@ -287,7 +284,7 @@ def update_type(type_id):
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Delete Product Type
+
 @product_blueprint.route(f"{BASE_URL}/types/<int:type_id>", methods=['DELETE'])
 def delete_type(type_id):
     try:
@@ -300,7 +297,7 @@ def delete_type(type_id):
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 
-# Add Category
+
 @product_blueprint.route(f"{BASE_URL}/categories", methods=['POST'])
 def create_category():
     try:
@@ -313,7 +310,7 @@ def create_category():
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Get All Categories
+
 @product_blueprint.route(f"{BASE_URL}/categories", methods=['GET'])
 def get_categories():
     try:
@@ -322,7 +319,7 @@ def get_categories():
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Update Category
+
 @product_blueprint.route(f"{BASE_URL}/categories/<int:category_id>", methods=['PUT'])
 def update_category(category_id):
     try:
@@ -335,7 +332,7 @@ def update_category(category_id):
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Delete Category
+
 @product_blueprint.route(f"{BASE_URL}/categories/<int:category_id>", methods=['DELETE'])
 def delete_category(category_id):
     try:
@@ -348,7 +345,6 @@ def delete_category(category_id):
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 
-# Add Country
 @product_blueprint.route(f"{BASE_URL}/country", methods=['POST'])
 def create_country():
     try:
@@ -361,7 +357,7 @@ def create_country():
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Get All Countries
+
 @product_blueprint.route(f"{BASE_URL}/countries", methods=['GET'])
 def get_countries():
     try:
@@ -370,7 +366,7 @@ def get_countries():
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Update Country
+
 @product_blueprint.route(f"{BASE_URL}/country/<int:country_id>", methods=['PUT'])
 def update_country(country_id):
     try:
@@ -383,7 +379,7 @@ def update_country(country_id):
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Delete Country
+
 @product_blueprint.route(f"{BASE_URL}/country/<int:country_id>", methods=['DELETE'])
 def delete_country(country_id):
     try:
@@ -396,7 +392,7 @@ def delete_country(country_id):
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 
-# Add Province
+
 @product_blueprint.route(f"{BASE_URL}/province", methods=['POST'])
 def create_province():
     try:
@@ -409,7 +405,7 @@ def create_province():
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Get All Provinces
+
 @product_blueprint.route(f"{BASE_URL}/provinces", methods=['GET'])
 def get_provinces():
     try:
@@ -418,7 +414,7 @@ def get_provinces():
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Update Province
+
 @product_blueprint.route(f"{BASE_URL}/province/<int:province_id>", methods=['PUT'])
 def update_province(province_id):
     try:
@@ -431,7 +427,7 @@ def update_province(province_id):
         db.session.rollback()
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
-# Delete Province
+
 @product_blueprint.route(f"{BASE_URL}/province/<int:province_id>", methods=['DELETE'])
 def delete_province(province_id):
     try:
