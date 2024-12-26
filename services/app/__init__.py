@@ -1,11 +1,10 @@
 from flask import Flask
 # from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from app.extensions import db, migrate, ma
+# from flask_migrate import Migrate
+from app.extensions import db, ma
 from app.config import Config
-from app.routes import product_blueprint
-from app.extensions import db, migrate
-# from ..app.models import Service
+from app.routes import service_blueprint
+from app.extensions import db
 
 # db = SQLAlchemy()
 # migrate = Migrate()
@@ -16,14 +15,13 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
-    migrate.init_app(app, db)
+    # migrate.init_app(app, db)
 
-    app.register_blueprint(product_blueprint)
+    app.register_blueprint(service_blueprint)
 
     @app.route('/test/')
     def test_page():
         return '<h1>Testing the Flask Application Factory Pattern</h1>'
-    
-    # app.run(host='0.0.0.0', port=5001)
+
 
     return app
